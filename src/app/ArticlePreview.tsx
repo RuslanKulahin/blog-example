@@ -1,36 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ROUTING } from "./routing";
 import AppLink from "./shared/components/app-link";
+import { articleStorage } from './ArticleStorage';
 
 type ArticlePreviewProps = {
     name: string;
     text: string;
   }
-  
-  const getLikeKey = (articleName: string) => `dev_blog_1_like${articleName}`;
 
   export default function ArticlePreview({name, text}: ArticlePreviewProps) {
-    const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(articleStorage.liked(name));
 
-    useEffect(() => {
-        const likeKey = getLikeKey(name);
-        const likeValue = localStorage.getItem(likeKey);
-        setLiked(likeValue  === "like");
+    // useEffect(() => {
+    //     const likeKey = getLikeKey(name);
+    //     const likeValue = localStorage.getItem(likeKey);
+    //     setLiked(likeValue  === "like");
     
-    }, [name]);
+    // }, [name]);
 
     const like = () => {
-        const likeKey = getLikeKey(name);
-        localStorage.setItem(likeKey, "like");
+        articleStorage.like(name);
         setLiked(true);
     };
+
+    console.log("LIKED VALUE", liked);
 
     return (
     <>
       <AppLink href={ROUTING.article(name)}>{text}</AppLink>
-      <button onClick={like} type="button">{liked ? "❤️" : "Like"}</button>
+      <button onClick={like} type="button" suppressHydrationWarning>{liked ? "❤️" : "Like"}</button>
     </>
     );
   }
